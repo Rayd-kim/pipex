@@ -42,5 +42,6 @@ char	*file1_size(char *str) //file1 읽어오고 그만큼 할당해서 읽기.
 	if (buffer == 0)
 		return (NULL);
 	close (fd);
-	return (read_file(buffer, str, size));
+	read_file1(buffer, str, size);
+	return (buffer);
 }

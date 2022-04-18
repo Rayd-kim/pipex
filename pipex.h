@@ -9,4 +9,6 @@
 # include <stdlib.h>
 # include "libft/libft.h"
 
+void	read_file1(char *buffer, char *file1, int size);
+char	*file1_size(char *str);
 # endif
