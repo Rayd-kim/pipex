@@ -1,5 +1,6 @@
 #include "pipex.h"
 #include <stdio.h>
+#include "gnl/get_next_line.h"
 
 char	*path_split(char **envp)
 {
@@ -46,65 +47,54 @@ void	path_check(char *cmd, char **envp)
 	free(ret);
 }
 
+int	do_cmd(char *cmd, char **envp, int fd)
+{
+	int	pid;
+	int	fd_in[2];
+
+	pipe (fd_in);
+	dup2 (fd, 0);
+	pid  = fork();
+	if (pid == 0)
+	{
+		dup2 (fd_in[1], 1);
+		close (fd_in[0]);
+		path_check(cmd, envp);
+	}
+	close (fd_in[1]);
+	return (fd_in[0]);
+}
 
 int main(int argc, char *argv[], char **envp)
 {
 	int		fd;
-	int		fd1[2], fd2[2];
-	pid_t	pid;
-	pid_t	pid2;
+	int		fd2;
+	//int		fd3;
+	int		i;
+	char	*temp;
 
-	if (pipe(fd2) == -1)
-	{
-		write (2, "error\n", 6);
-		return (-1);
-	}
     fd = open (argv[1], O_RDONLY);
-    dup2 (fd, 0);
+	fd2 = do_cmd(argv[2], envp, fd);
+	close (fd);
+	fd2 = do_cmd(argv[3], envp, fd2);
+
+	if (access(argv[4], F_OK) == 0)
+	{
+		if (unlink(argv[4]) < 0)
+		{
+			printf("%s\n", strerror(errno));
+			return (0);
+		}
+    }
+    fd = open (argv[4], O_WRONLY | O_CREAT, 0644);
+	temp = get_next_line(fd2);
+	while (temp != NULL)
+	{
+		write (fd, temp, ft_strlen(temp));
+		free (temp);
+		temp = get_next_line(fd2);
+	}
+	free (temp);
     close (fd);
-
-	pid = fork();
-
-
-	if (pid == 0)
-	{
-        if (pipe(fd1) == -1)
-		{
-			write (2, "error\n", 6);
-			return (-1);
-		}
-		pid2 = fork();
-
-		
-		if (pid2 == 0)
-		{
-            dup2 (fd1[1], 1);
-            close (fd1[0]);
-			path_check(argv[2], envp);
-		}
-        else
-        {
-            dup2 (fd1[0], 0);
-            close (fd1[1]);
-            dup2 (fd2[1], 1);
-            close (fd2[0]);
-            path_check(argv[3], envp);
-        }
-	}
-    else
-	{
-		wait(NULL);
-		if (access(argv[4], F_OK) == 0)
-	    {
-		    if (unlink(argv[4]) < 0)
-		    {
-		    	printf("%s\n", strerror(errno));
-		    	return (0);
-		    }
-        }
-        fd = open (argv[4], O_WRONLY | O_CREAT, 0644);
-        dup2 (fd2[0], fd);
-        close (fd);
-	}
 	return (0);
 }
