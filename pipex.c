@@ -34,7 +34,8 @@ int	do_cmd(char *cmd, char **envp, int fd)
 		path_check(cmd, envp);
 		exit (127);
 	}
-	waitpid(0, &status, WNOHANG);
+	//waitpid(pid, &status, 0);
+	//waitpid(pid, &status, WNOHANG);
 	close (fd_in[1]);
 	return (fd_in[0]);
 }
@@ -64,6 +65,8 @@ int	write_file(char *file)
 	return (fd);
 }
 
+#include <stdio.h>
+
 int	main(int argc, char *argv[], char **envp)
 {
 	int		fd;
@@ -76,6 +79,10 @@ int	main(int argc, char *argv[], char **envp)
 	fd2 = do_cmd(argv[2], envp, fd);
 	close (fd);
 	fd2 = do_cmd(argv[3], envp, fd2);
+	int	status = 0;
+	waitpid(0, &status, 0);
+	if (WEXITSTATUS(status) == 127)
+		exit(WEXITSTATUS(status));
 	fd = write_file(argv[argc - 1]);
 	temp = get_next_line(fd2);
 	while (temp != NULL)
