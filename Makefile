@@ -10,7 +10,15 @@ FILE = pipex.c \
 		./gnl/get_next_line.c \
 		./gnl/get_next_line_utils.c 
 
+FILE_B = pipex_bonus.c \
+			error.c \
+			cmd_path.c \
+			./gnl/get_next_line.c \
+			./gnl/get_next_line_utils.c
+
 OBJS = $(FILE:.c=.o)
+
+OBJS_B = $(FILE_B:.c=.o)
 
 all : $(NAME)
 
@@ -21,9 +29,13 @@ $(NAME) : $(OBJS)
 %.o : %.c
 	$(CC) $(W) -c $< -o $@
 
+bonus : $(OBJS_B)
+	$(CC) $(W) $(OBJS_B) -L./libft -lft -o $(NAME)
+
 clean :
 	@$(MAKE) -C ./libft clean
 	rm -rf $(OBJS)
+	rm -rf $(OBJS_B)
 
 fclean : clean
 	@$(MAKE) -C ./libft fclean
@@ -31,4 +43,4 @@ fclean : clean
 
 re : fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
