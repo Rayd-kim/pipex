@@ -10,7 +10,7 @@ void	read_file1(char *buffer, char *file1, int size)
 	{
 		write (2, strerror(errno), ft_strlen(strerror(errno)));
 		write (2, "\n", 1);
-		exit (0);
+		exit (1);
 	}
 	read (fd, buffer, size);
 	close (fd);
