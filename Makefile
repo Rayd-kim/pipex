@@ -30,6 +30,7 @@ $(NAME) : $(OBJS)
 	$(CC) $(W) -c $< -o $@
 
 bonus : $(OBJS_B)
+	@$(MAKE) -C ./libft all
 	$(CC) $(W) $(OBJS_B) -L./libft -lft -o $(NAME)
 
 clean :

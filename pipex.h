@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: youskim <youskim@student.42seoul.k>        +#+  +:+       +#+        */
+/*   By: youskim <youskim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/21 18:25:10 by youskim           #+#    #+#             */
-/*   Updated: 2022/04/21 18:25:10 by youskim          ###   ########.fr       */
+/*   Updated: 2022/04/23 16:47:16 by youskim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@
 # include "libft/libft.h"
 # include "gnl/get_next_line.h"
 
-void		error_stdin();
+void		error_stdin(void);
 void		path_check(char *cmd, char **envp);
 #endif
