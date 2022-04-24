@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: youskim <youskim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/21 18:25:10 by youskim           #+#    #+#             */
-/*   Updated: 2022/04/23 16:47:16 by youskim          ###   ########.fr       */
+/*   Created: 2022/04/21 18:24:33 by youskim           #+#    #+#             */
+/*   Updated: 2022/04/23 16:47:43 by youskim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#include "pipex_bonus.h"
 
-# include <fcntl.h>
-# include <unistd.h>
-# include <string.h>
-# include <stdlib.h>
-# include <sys/wait.h>
-# include <errno.h>
-# include "libft/libft.h"
-# include "gnl/get_next_line.h"
-
-int			open_file(char *file);
-int			write_file(char *file);
-void		error_stdin(void);
-void		path_check(char *cmd, char **envp);
-#endif
+void	error_stdin(void)
+{
+	write (2, strerror(errno), ft_strlen(strerror(errno)));
+	write (2, "\n", 1);
+	exit (errno);
+}

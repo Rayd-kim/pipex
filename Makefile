@@ -7,12 +7,14 @@ W = -Wall -Wextra -Werror
 FILE = pipex.c \
 		error.c \
 		cmd_path.c \
+		file_open.c \
 		./gnl/get_next_line.c \
 		./gnl/get_next_line_utils.c 
 
 FILE_B = pipex_bonus.c \
-			error.c \
-			cmd_path.c \
+			error_bonus.c \
+			cmd_path_bonus.c \
+			file_open_bonus.c \
 			./gnl/get_next_line.c \
 			./gnl/get_next_line_utils.c
 

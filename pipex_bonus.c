@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-int	do_cmd(char *cmd, char **envp, int fd, pid_t *pid)
+int	do_cmd(char *cmd, char **envp, int fd, int *pid)
 {
-	int	fd_in[2];
+	int		fd_in[2];
 
 	if (pipe (fd_in) == -1)
 		error_stdin();
@@ -37,74 +37,69 @@ int	do_cmd(char *cmd, char **envp, int fd, pid_t *pid)
 	return (fd_in[0]);
 }
 
-int	open_file(char *file)
-{
-	int	fd;
-
-	fd = open (file, O_RDONLY);
-	if (fd < 0)
-		error_stdin();
-	return (fd);
-}
-
-int	write_file(char *file)
-{
-	int	fd;
-
-	if (access(file, F_OK) == 0)
-	{
-		if (unlink(file) < 0)
-			error_stdin();
-	}
-	fd = open (file, O_WRONLY | O_CREAT, 0644);
-	if (fd < 0)
-		error_stdin();
-	return (fd);
-}
-
-void	pid_check(void)
+void	pid_check(int *check, int *pid, int argc)
 {
 	int	status;
 	int	now_pid;
 
+	*check = 0;
 	now_pid = 0;
 	while (1)
 	{
 		now_pid = waitpid(0, &status, 0);
 		if (now_pid == -1)
 			break ;
-		if (WEXITSTATUS(status) == 127)
-			exit(WEXITSTATUS(status));
+		if (now_pid == pid[argc - 4])
+			*check = status;
 	}
+	free (pid);
+}
+
+void	write_to_outfile(int outfile_fd, int pipe_fd)
+{
+	char	*temp;
+
+	temp = get_next_line(pipe_fd);
+	while (temp != NULL)
+	{
+		write (outfile_fd, temp, ft_strlen(temp));
+		free (temp);
+		temp = get_next_line(pipe_fd);
+	}
+}
+
+int	*pid_arr(int argc)
+{
+	int	*ret;
+
+	ret = (int *)malloc(sizeof(pid_t) * (argc - 3));
+	ft_memset(ret, 0, argc - 3);
+	return (ret);
 }
 
 int	main(int argc, char *argv[], char **envp)
 {
 	int		fd;
 	int		fd2;
-	char	*temp;
-	pid_t	pid[argc - 3];
 	int		i;
+	int		check;
+	int		*pid;
 
+	if (argc < 3)
+		exit (1);
 	i = 2;
 	fd = open_file(argv[1]);
-	fd2 = dup(fd);
+	fd2 = fd;
+	pid = pid_arr(argc);
 	while (i < argc -1)
 	{
 		fd2 = do_cmd(argv[i], envp, fd2, &pid[i - 2]);
 		i++;
 	}
-	pid_check();
+	pid_check(&check, pid, argc);
 	fd = write_file(argv[argc - 1]);
-	temp = get_next_line(fd2);
-	while (temp != NULL)
-	{
-		write (fd, temp, ft_strlen(temp));
-		free (temp);
-		temp = get_next_line(fd2);
-	}
-	free (temp);
+	write_to_outfile(fd, fd2);
 	close (fd2);
 	close (fd);
-	return (0);
+	exit(WEXITSTATUS(check));
 }
