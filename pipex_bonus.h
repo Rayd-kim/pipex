@@ -22,6 +22,10 @@
 # include "libft/libft.h"
 # include "gnl/get_next_line.h"
 
+int			*pid_arr(int argc);
+void		pid_check(int *check, int *pid, int argc);
+int			open_heredoc(char *file);
+int			write_file_app(char *file);
 int			open_file(char *file);
 int			write_file(char *file);
 void		error_stdin(void);

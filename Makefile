@@ -15,9 +15,9 @@ FILE_B = pipex_bonus.c \
 			error_bonus.c \
 			cmd_path_bonus.c \
 			file_open_bonus.c \
+			pid_bonus.c \
 			./gnl/get_next_line.c \
 			./gnl/get_next_line_utils.c
-CHECK = 1
 
 OBJS = $(FILE:.c=.o)
 

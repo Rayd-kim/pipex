@@ -37,24 +37,6 @@ int	do_cmd(char *cmd, char **envp, int fd, int *pid)
 	return (fd_in[0]);
 }
 
-void	pid_check(int *check, int *pid, int argc)
-{
-	int	status;
-	int	now_pid;
-
-	*check = 0;
-	now_pid = 0;
-	while (1)
-	{
-		now_pid = waitpid(0, &status, 0);
-		if (now_pid == -1)
-			break ;
-		if (now_pid == pid[argc - 4])
-			*check = status;
-	}
-	free (pid);
-}
-
 void	write_to_outfile(int outfile_fd, int pipe_fd)
 {
 	char	*temp;
@@ -68,25 +50,41 @@ void	write_to_outfile(int outfile_fd, int pipe_fd)
 	}
 }
 
-int	*pid_arr(int argc)
+void	do_heredoc(int argc, char *argv[], char **envp, int *check)
 {
-	int	*ret;
+	int	fd;
+	int	fd2;
+	int	*pid;
+	int	i;
 
-	ret = (int *)malloc(sizeof(pid_t) * (argc - 3));
-	ft_memset(ret, 0, argc - 3);
-	return (ret);
+	fd = open_heredoc(argv[2]);
+	pid = pid_arr(argc - 1);
+	fd2 = do_cmd(argv[3], envp, fd, &pid[0]);
+	if (access(argv[1], F_OK) == 0)
+	{
+		if (unlink(argv[1]) < 0)
+			error_stdin();
+	}
+	i = 4;
+	while (i < argc - 1)
+	{
+		fd2 = do_cmd(argv[i], envp, fd2, &pid[i - 3]);
+		i++;
+	}
+	pid_check(check, pid, argc - 1);
+	fd = write_file_app(argv[argc - 1]);
+	write_to_outfile(fd, fd2);
+	close (fd2);
+	close (fd);
 }
 
-int	main(int argc, char *argv[], char **envp)
+void	do_just(int argc, char *argv[], char **envp, int *check)
 {
-	int		fd;
-	int		fd2;
-	int		i;
-	int		check;
-	int		*pid;
+	int	i;
+	int	fd;
+	int	fd2;
+	int	*pid;
 
-	if (argc < 3)
-		exit (1);
 	i = 2;
 	fd = open_file(argv[1]);
 	fd2 = fd;
@@ -96,10 +94,22 @@ int	main(int argc, char *argv[], char **envp)
 		fd2 = do_cmd(argv[i], envp, fd2, &pid[i - 2]);
 		i++;
 	}
-	pid_check(&check, pid, argc);
+	pid_check(check, pid, argc);
 	fd = write_file(argv[argc - 1]);
 	write_to_outfile(fd, fd2);
 	close (fd2);
 	close (fd);
+}
+
+int	main(int argc, char *argv[], char **envp)
+{
+	int	check;
+
+	if (argc < 3)
+		exit (1);
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+		do_heredoc(argc, argv, envp, &check);
+	else
+		do_just(argc, argv, envp, &check);
 	exit(WEXITSTATUS(check));
 }
