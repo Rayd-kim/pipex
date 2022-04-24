@@ -17,23 +17,29 @@ FILE_B = pipex_bonus.c \
 			file_open_bonus.c \
 			./gnl/get_next_line.c \
 			./gnl/get_next_line_utils.c
+CHECK = 1
 
 OBJS = $(FILE:.c=.o)
 
 OBJS_B = $(FILE_B:.c=.o)
 
+ifdef WITH_BONUS
+	OBJECTS = $(OBJS_B)
+else
+	OBJECTS = $(OBJS)
+endif
+
 all : $(NAME)
 
-$(NAME) : $(OBJS)
+$(NAME) : $(OBJECTS)
 	@$(MAKE) -C ./libft all
-	$(CC) $(W) $(OBJS) -L./libft -lft -o $(NAME)
+	$(CC) $(W) $(OBJECTS) -L./libft -lft -o $(NAME)
 
 %.o : %.c
 	$(CC) $(W) -c $< -o $@
 
 bonus : $(OBJS_B)
-	@$(MAKE) -C ./libft all
-	$(CC) $(W) $(OBJS_B) -L./libft -lft -o $(NAME)
+	make WITH_BONUS=1 all
 
 clean :
 	@$(MAKE) -C ./libft clean
