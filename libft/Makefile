@@ -34,19 +34,22 @@ B_OBJS = $(B_FILE:.c=.o)
 
 OBJS = $(FILE:.c=.o)
 
+ifdef WITH_BONUS
+	OBJECTS = $(OBJS) $(B_OBJS)
+else
+	OBJECTS = $(OBJS)
+endif
+
 all : $(NAME)
 
-$(OBJS) : $(FILE)
-	$(CC) $(W) -c $^
+%.o : %.c
+	$(CC) $(W) -c $< -o $@
 
-$(NAME) : $(OBJS)
+$(NAME) : $(OBJECTS)
 	ar rcs $@ $^
 
 bonus : $(B_OBJS)
-	ar rcs $(NAME) $^
-
-$(B_OBJS) : $(B_FILE)
-	$(CC) $(W) -c $^
+	make WITH_BONUS=1 all
 
 clean:
 	rm -f $(OBJS) $(B_OBJS)
