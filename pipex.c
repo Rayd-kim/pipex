@@ -79,5 +79,6 @@ int	main(int argc, char *argv[], char **envp)
 	free (temp);
 	close (fd2);
 	close (fd);
-	exit(WEXITSTATUS(check));
+	check = check >> 8;
+	return (check);
 }

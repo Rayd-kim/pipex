@@ -90,7 +90,7 @@ void	do_just(int argc, char *argv[], char **envp, int *check)
 		i++;
 	}
 	pid_check(check, pid, argc);
-	fd = write_file(argv[argc - 1]);
+	fd = write_file_app(argv[argc - 1]);
 	write_to_outfile(fd, fd2);
 	close (fd2);
 	close (fd);
@@ -106,5 +106,6 @@ int	main(int argc, char *argv[], char **envp)
 		do_heredoc(argc, argv, envp, &check);
 	else
 		do_just(argc, argv, envp, &check);
-	exit(WEXITSTATUS(check));
+	check = check >> 8;
+	return (check);
 }
