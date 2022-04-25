@@ -93,6 +93,8 @@ char	**ft_split(char const *s, char c)
 	char	**arr;
 	int		count;
 
+	if (s == NULL)
+		return (NULL);
 	count = check_count(s, c);
 	arr = (char **)malloc(sizeof(char *) * (count + 1));
 	if (arr == 0)

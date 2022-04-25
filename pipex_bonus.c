@@ -60,11 +60,6 @@ void	do_heredoc(int argc, char *argv[], char **envp, int *check)
 	fd = open_heredoc(argv[2]);
 	pid = pid_arr(argc - 1);
 	fd2 = do_cmd(argv[3], envp, fd, &pid[0]);
-	if (access(argv[1], F_OK) == 0)
-	{
-		if (unlink(argv[1]) < 0)
-			error_stdin();
-	}
 	i = 4;
 	while (i < argc - 1)
 	{

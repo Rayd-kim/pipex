@@ -37,6 +37,13 @@ void	do_execve(char *ret, char **command, char **envp)
 		error_stdin();
 }
 
+void	cmd_not_found(char **command)
+{
+	write (2, "zsh: command not found: ", 24);
+	write (2, command[0], ft_strlen(command[0]));
+	write (2, "\n", 1);
+}
+
 void	path_check(char *cmd, char **envp)
 {
 	int		i;
@@ -48,6 +55,8 @@ void	path_check(char *cmd, char **envp)
 	i = 0;
 	split = ft_split(path_split(envp), ':');
 	command = ft_split(cmd, ' ');
+	if (split == NULL || command == NULL)
+		exit (1);
 	while (split[i])
 	{
 		ret = ft_strjoin(split[i], "/");
@@ -59,9 +68,7 @@ void	path_check(char *cmd, char **envp)
 		else
 			i++;
 	}
-	write (2, "zsh: command not found: ", 24);
-	write (2, command[0], ft_strlen(command[0]));
-	write (2, "\n", 1);
+	cmd_not_found(command);
 	free(command);
 	free(ret);
 }
