@@ -90,11 +90,13 @@ void	do_just(int argc, char *argv[], char **envp, int *check)
 		i++;
 	}
 	pid_check(check, pid, argc);
-	fd = write_file_app(argv[argc - 1]);
+	fd = write_file(argv[argc - 1]);
 	write_to_outfile(fd, fd2);
 	close (fd2);
 	close (fd);
 }
+
+#include <stdio.h>
 
 int	main(int argc, char *argv[], char **envp)
 {

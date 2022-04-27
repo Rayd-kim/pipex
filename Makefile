@@ -2,7 +2,7 @@ NAME = pipex
 
 CC = gcc
 
-W = -Wall -Wextra -Werror
+W =-Wall -Wextra -Werror
 
 FILE = pipex.c \
 		error.c \
